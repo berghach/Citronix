@@ -31,5 +31,5 @@ public class Tree {
     private Field field;
 
     @OneToMany(mappedBy = "tree", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<HarvestDetail> harvests;
+    private Set<HarvestDetail> harvestDetails;
 }

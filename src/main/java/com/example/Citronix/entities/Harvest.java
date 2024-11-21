@@ -35,5 +35,5 @@ public class Harvest {
     private Sale sale;
 
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<HarvestDetail> trees;
+    private Set<HarvestDetail> harvestDetails;
 }

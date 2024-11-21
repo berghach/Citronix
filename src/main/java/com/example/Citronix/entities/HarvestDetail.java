@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "harvest_detail")
 @NoArgsConstructor
@@ -13,6 +15,9 @@ import lombok.Setter;
 public class HarvestDetail {
     @EmbeddedId
     private HarvestDetailId id = new HarvestDetailId();
+
+    @Column(name = "date")
+    private LocalDate date;
 
     @ManyToOne
     @MapsId("harvestId")
