@@ -10,11 +10,15 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
-public class FarmRepositoryImpl implements FarmRepository, CustomFarmRepository {
+@Repository
+public abstract class FarmRepositoryImpl implements JpaRepository<Farm, UUID>, CustomFarmRepository {
     @Autowired
     private EntityManager entityManager;
 
