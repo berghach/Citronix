@@ -22,26 +22,45 @@ public class HarvestService implements Services<HarvestRequestDTO, HarvestRespon
 
     @Override
     public Optional<HarvestResponseDTO> get(UUID id) {
-        return Optional.empty();
+        Optional<Harvest> optionalHarvest = harvestRepository.findById(id);
+
+        return optionalHarvest.map(harvest -> baseMapper.toResponseDto(harvest));
     }
 
     @Override
     public List<HarvestResponseDTO> getAll() {
-        return List.of();
+        List<Harvest> harvests = harvestRepository.findAll();
+
+        return harvests.stream().map(harvest -> baseMapper.toResponseDto(harvest)).toList();
     }
 
     @Override
-    public boolean save(HarvestRequestDTO entity) {
-        return false;
+    public HarvestResponseDTO save(HarvestRequestDTO reqEntity) {
+        Harvest savedHarvest = harvestRepository.save(baseMapper.toEntity(reqEntity));
+        return baseMapper.toResponseDto(savedHarvest);
     }
 
     @Override
-    public boolean update(HarvestRequestDTO entity) {
-        return false;
+    public HarvestResponseDTO update(HarvestRequestDTO reqEntity, UUID oldId) {
+        Optional<Harvest> optionalExistingHarvest = harvestRepository.findById(oldId);
+        if(optionalExistingHarvest.isPresent()){
+            Harvest existingHarvest = optionalExistingHarvest.get();
+            baseMapper.updateEntityFromDto(reqEntity, existingHarvest);
+            Harvest updatedHarvest = harvestRepository.save(existingHarvest);
+            return baseMapper.toResponseDto(updatedHarvest);
+        }else {
+            throw new RuntimeException("Entity not found for update");
+        }
     }
 
     @Override
-    public boolean delete(HarvestRequestDTO entity) {
-        return false;
+    public boolean delete(UUID oldId) {
+        Optional<Harvest> optionalHarvest = harvestRepository.findById(oldId);
+        if (optionalHarvest.isPresent()) {
+            harvestRepository.delete(optionalHarvest.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 }

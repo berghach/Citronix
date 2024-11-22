@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface Services<EntityReq, EntityRes> {
     Optional<EntityRes> get(UUID id);
     List<EntityRes> getAll();
-    boolean save(EntityReq entity);
-    boolean update(EntityReq entity);
-    boolean delete(EntityReq entity);
+    EntityRes save(EntityReq reqEntity);
+    EntityRes update(EntityReq reqEntity, UUID oldId);
+    boolean delete(UUID oldId);
 }

@@ -22,26 +22,46 @@ public class SaleService implements Services<SaleRequestDTO, SaleResponseDTO>{
 
     @Override
     public Optional<SaleResponseDTO> get(UUID id) {
-        return Optional.empty();
+        Optional<Sale> optionalSale = saleRepository.findById(id);
+
+        return optionalSale.map(sale -> baseMapper.toResponseDto(sale));
     }
 
     @Override
     public List<SaleResponseDTO> getAll() {
-        return List.of();
+        List<Sale> sales = saleRepository.findAll();
+
+        return sales.stream().map(sale -> baseMapper.toResponseDto(sale)).toList();
     }
 
     @Override
-    public boolean save(SaleRequestDTO entity) {
-        return false;
+    public SaleResponseDTO save(SaleRequestDTO reqEntity) {
+        Sale savedSale = saleRepository.save(baseMapper.toEntity(reqEntity));
+        return baseMapper.toResponseDto(savedSale);
     }
 
     @Override
-    public boolean update(SaleRequestDTO entity) {
-        return false;
+    public SaleResponseDTO update(SaleRequestDTO reqEntity, UUID oldId) {
+        Optional<Sale> optionalExistingSale = saleRepository.findById(oldId);
+        if(optionalExistingSale.isPresent()){
+            Sale existingSale = optionalExistingSale.get();
+            baseMapper.updateEntityFromDto(reqEntity, existingSale);
+            Sale updatedSale = saleRepository.save(existingSale);
+            return baseMapper.toResponseDto(updatedSale);
+        }else {
+            throw new RuntimeException("Entity not found for update");
+        }
     }
 
     @Override
-    public boolean delete(SaleRequestDTO entity) {
-        return false;
+    public boolean delete(UUID oldId) {
+        Optional<Sale> optionalSale = saleRepository.findById(oldId);
+        if (optionalSale.isPresent()) {
+            saleRepository.delete(optionalSale.get());
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }

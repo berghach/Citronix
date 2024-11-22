@@ -22,26 +22,45 @@ public class FieldService implements Services<FieldRequestDTO, FieldResponseDTO>
 
     @Override
     public Optional<FieldResponseDTO> get(UUID id) {
-        return Optional.empty();
+        Optional<Field> optionalField = fieldRepository.findById(id);
+
+        return optionalField.map(field -> baseMapper.toResponseDto(field));
     }
 
     @Override
     public List<FieldResponseDTO> getAll() {
-        return List.of();
+        List<Field> fields = fieldRepository.findAll();
+
+        return fields.stream().map(field -> baseMapper.toResponseDto(field)).toList();
     }
 
     @Override
-    public boolean save(FieldRequestDTO entity) {
-        return false;
+    public FieldResponseDTO save(FieldRequestDTO reqEntity) {
+        Field savedField = fieldRepository.save(baseMapper.toEntity(reqEntity));
+        return baseMapper.toResponseDto(savedField);
     }
 
     @Override
-    public boolean update(FieldRequestDTO entity) {
-        return false;
+    public FieldResponseDTO update(FieldRequestDTO reqEntity, UUID oldId) {
+        Optional<Field> optionalExistingField = fieldRepository.findById(oldId);
+        if(optionalExistingField.isPresent()){
+            Field existingField = optionalExistingField.get();
+            baseMapper.updateEntityFromDto(reqEntity, existingField);
+            Field updatedField = fieldRepository.save(existingField);
+            return baseMapper.toResponseDto(updatedField);
+        }else {
+            throw new RuntimeException("Entity not found for update");
+        }
     }
 
     @Override
-    public boolean delete(FieldRequestDTO entity) {
-        return false;
+    public boolean delete(UUID oldId) {
+        Optional<Field> optionalField = fieldRepository.findById(oldId);
+        if (optionalField.isPresent()) {
+            fieldRepository.delete(optionalField.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 }
