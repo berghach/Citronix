@@ -1,6 +1,7 @@
 package com.example.Citronix.dtos.response;
 
 import com.example.Citronix.dtos.response.summary.FieldSummaryDTO;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class FarmResponseDTO {
     private UUID id;
     private String name;

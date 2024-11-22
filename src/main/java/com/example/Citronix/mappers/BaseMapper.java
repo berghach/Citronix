@@ -1,4 +1,4 @@
-package com.example.Citronix.mapper;
+package com.example.Citronix.mappers;
 
 import org.mapstruct.MapperConfig;
 import org.mapstruct.MappingTarget;

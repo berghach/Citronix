@@ -2,9 +2,8 @@ package com.example.Citronix.entities;
 
 import com.example.Citronix.enums.Season;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -13,8 +12,11 @@ import java.util.UUID;
 @Entity
 @Table(name = "harvest")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
+@Accessors(chain = true)
 public class Harvest {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -3,8 +3,11 @@ package com.example.Citronix.services;
 import com.example.Citronix.dtos.request.FarmRequestDTO;
 import com.example.Citronix.dtos.response.FarmResponseDTO;
 import com.example.Citronix.entities.Farm;
-import com.example.Citronix.mapper.BaseMapper;
-import com.example.Citronix.repositories.implementation.FarmRepositoryImpl;
+import com.example.Citronix.mappers.BaseMapper;
+import com.example.Citronix.mappers.FarmMapper;
+import com.example.Citronix.repositories.FarmRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,31 +17,31 @@ import java.util.UUID;
 
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class FarmService implements Services<FarmRequestDTO, FarmResponseDTO> {
-    @Autowired
-    private FarmRepositoryImpl farmRepository;
 
-    @Autowired
-    private BaseMapper<Farm, FarmRequestDTO, FarmResponseDTO> baseMapper;
+    private final FarmRepository farmRepository;
+    private final FarmMapper farmMapper;
 
     @Override
     public Optional<FarmResponseDTO> get(UUID id) {
         Optional<Farm> optionalFarm = farmRepository.findById(id);
 
-        return optionalFarm.map(farm -> baseMapper.toResponseDto(farm));
+        return optionalFarm.map(farmMapper::toResponseDto);
     }
 
     @Override
     public List<FarmResponseDTO> getAll() {
         List<Farm> farms = farmRepository.findAll();
 
-        return farms.stream().map(farm -> baseMapper.toResponseDto(farm)).toList();
+        return farms.stream().map(farmMapper::toResponseDto).toList();
     }
 
     @Override
     public FarmResponseDTO save(FarmRequestDTO reqEntity) {
-        Farm savedFarm = farmRepository.save(baseMapper.toEntity(reqEntity));
-        return baseMapper.toResponseDto(savedFarm);
+        Farm savedFarm = farmRepository.save(farmMapper.toEntity(reqEntity));
+        return farmMapper.toResponseDto(savedFarm);
     }
 
     @Override
@@ -46,9 +49,9 @@ public class FarmService implements Services<FarmRequestDTO, FarmResponseDTO> {
         Optional<Farm> optionalExistingFarm = farmRepository.findById(oldId);
         if(optionalExistingFarm.isPresent()){
             Farm existingFarm = optionalExistingFarm.get();
-            baseMapper.updateEntityFromDto(reqEntity, existingFarm);
+            farmMapper.updateEntityFromDto(reqEntity, existingFarm);
             Farm updatedFarm = farmRepository.save(existingFarm);
-            return baseMapper.toResponseDto(updatedFarm);
+            return farmMapper.toResponseDto(updatedFarm);
         }else {
             throw new RuntimeException("Entity not found for update");
         }
