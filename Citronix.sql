@@ -108,3 +108,17 @@ ALTER TABLE IF EXISTS public.tree
     ON DELETE NO ACTION;
 
 END;
+
+-- trigger for Tree age update
+CREATE OR REPLACE FUNCTION update_age()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.age := age(NEW.plantation_date);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_age_trigger
+BEFORE INSERT OR UPDATE ON tree
+FOR EACH ROW
+EXECUTE FUNCTION update_age();

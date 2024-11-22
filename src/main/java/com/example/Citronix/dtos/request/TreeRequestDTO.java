@@ -7,5 +7,5 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Builder(builderClassName = "Builder")
-public record TreeRequestDTO(LocalDate plantationDate, long age, Field field) {
+public record TreeRequestDTO(LocalDate plantationDate, Field field) {
 }
