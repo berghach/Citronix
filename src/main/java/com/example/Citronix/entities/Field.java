@@ -1,9 +1,8 @@
 package com.example.Citronix.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,8 +10,11 @@ import java.util.UUID;
 @Entity
 @Table(name = "field")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
+@Accessors(chain = true)
 public class Field {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

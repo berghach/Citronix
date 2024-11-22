@@ -1,17 +1,19 @@
 package com.example.Citronix.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "harvest_detail")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
+@Accessors(chain = true)
 public class HarvestDetail {
     @EmbeddedId
     private HarvestDetailId id = new HarvestDetailId();

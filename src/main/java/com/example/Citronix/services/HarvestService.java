@@ -3,8 +3,11 @@ package com.example.Citronix.services;
 import com.example.Citronix.dtos.request.HarvestRequestDTO;
 import com.example.Citronix.dtos.response.HarvestResponseDTO;
 import com.example.Citronix.entities.Harvest;
-import com.example.Citronix.mapper.BaseMapper;
+import com.example.Citronix.mappers.BaseMapper;
+import com.example.Citronix.mappers.HarvestMapper;
 import com.example.Citronix.repositories.HarvestRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,31 +16,30 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class HarvestService implements Services<HarvestRequestDTO, HarvestResponseDTO>{
-    @Autowired
-    private HarvestRepository harvestRepository;
-    
-    @Autowired
-    private BaseMapper<Harvest, HarvestRequestDTO, HarvestResponseDTO> baseMapper;
+    private final HarvestRepository harvestRepository;
+    private final HarvestMapper harvestMapper;
 
     @Override
     public Optional<HarvestResponseDTO> get(UUID id) {
         Optional<Harvest> optionalHarvest = harvestRepository.findById(id);
 
-        return optionalHarvest.map(harvest -> baseMapper.toResponseDto(harvest));
+        return optionalHarvest.map(harvestMapper::toResponseDto);
     }
 
     @Override
     public List<HarvestResponseDTO> getAll() {
         List<Harvest> harvests = harvestRepository.findAll();
 
-        return harvests.stream().map(harvest -> baseMapper.toResponseDto(harvest)).toList();
+        return harvests.stream().map(harvestMapper::toResponseDto).toList();
     }
 
     @Override
     public HarvestResponseDTO save(HarvestRequestDTO reqEntity) {
-        Harvest savedHarvest = harvestRepository.save(baseMapper.toEntity(reqEntity));
-        return baseMapper.toResponseDto(savedHarvest);
+        Harvest savedHarvest = harvestRepository.save(harvestMapper.toEntity(reqEntity));
+        return harvestMapper.toResponseDto(savedHarvest);
     }
 
     @Override
@@ -45,9 +47,9 @@ public class HarvestService implements Services<HarvestRequestDTO, HarvestRespon
         Optional<Harvest> optionalExistingHarvest = harvestRepository.findById(oldId);
         if(optionalExistingHarvest.isPresent()){
             Harvest existingHarvest = optionalExistingHarvest.get();
-            baseMapper.updateEntityFromDto(reqEntity, existingHarvest);
+            harvestMapper.updateEntityFromDto(reqEntity, existingHarvest);
             Harvest updatedHarvest = harvestRepository.save(existingHarvest);
-            return baseMapper.toResponseDto(updatedHarvest);
+            return harvestMapper.toResponseDto(updatedHarvest);
         }else {
             throw new RuntimeException("Entity not found for update");
         }
