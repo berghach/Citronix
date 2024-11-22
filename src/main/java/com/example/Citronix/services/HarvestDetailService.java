@@ -22,26 +22,46 @@ public class HarvestDetailService  implements Services<HarvestDetailRequestDTO, 
 
     @Override
     public Optional<HarvestDetailResponseDTO> get(UUID id) {
-        return Optional.empty();
+        Optional<HarvestDetail> optionalHarvestDetail = harvestDetailRepository.findById(id);
+
+        return optionalHarvestDetail.map(harvestDetail -> baseMapper.toResponseDto(harvestDetail));
     }
 
     @Override
     public List<HarvestDetailResponseDTO> getAll() {
-        return List.of();
+        List<HarvestDetail> harvestDetails = harvestDetailRepository.findAll();
+
+        return harvestDetails.stream().map(harvestDetail -> baseMapper.toResponseDto(harvestDetail)).toList();
     }
 
     @Override
-    public boolean save(HarvestDetailRequestDTO entity) {
-        return false;
+    public HarvestDetailResponseDTO save(HarvestDetailRequestDTO reqEntity) {
+        HarvestDetail savedHarvestDetail = harvestDetailRepository.save(baseMapper.toEntity(reqEntity));
+        return baseMapper.toResponseDto(savedHarvestDetail);
     }
 
     @Override
-    public boolean update(HarvestDetailRequestDTO entity) {
-        return false;
+    public HarvestDetailResponseDTO update(HarvestDetailRequestDTO reqEntity, UUID oldId) {
+        Optional<HarvestDetail> optionalExistingHarvestDetail = harvestDetailRepository.findById(oldId);
+        if(optionalExistingHarvestDetail.isPresent()){
+            HarvestDetail existingHarvestDetail = optionalExistingHarvestDetail.get();
+            baseMapper.updateEntityFromDto(reqEntity, existingHarvestDetail);
+            HarvestDetail updatedHarvestDetail = harvestDetailRepository.save(existingHarvestDetail);
+            return baseMapper.toResponseDto(updatedHarvestDetail);
+        }else {
+            throw new RuntimeException("Entity not found for update");
+        }
     }
 
     @Override
-    public boolean delete(HarvestDetailRequestDTO entity) {
-        return false;
+    public boolean delete(UUID oldId) {
+        Optional<HarvestDetail> optionalHarvestDetail = harvestDetailRepository.findById(oldId);
+        if (optionalHarvestDetail.isPresent()) {
+            harvestDetailRepository.delete(optionalHarvestDetail.get());
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }

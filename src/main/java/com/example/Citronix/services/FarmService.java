@@ -4,7 +4,6 @@ import com.example.Citronix.dtos.request.FarmRequestDTO;
 import com.example.Citronix.dtos.response.FarmResponseDTO;
 import com.example.Citronix.entities.Farm;
 import com.example.Citronix.mapper.BaseMapper;
-import com.example.Citronix.repositories.FarmRepository;
 import com.example.Citronix.repositories.implementation.FarmRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ import java.util.UUID;
 @Service
 public class FarmService implements Services<FarmRequestDTO, FarmResponseDTO> {
     @Autowired
-    private FarmRepository farmRepository;
+    private FarmRepositoryImpl farmRepository;
 
     @Autowired
     private BaseMapper<Farm, FarmRequestDTO, FarmResponseDTO> baseMapper;
@@ -37,17 +36,32 @@ public class FarmService implements Services<FarmRequestDTO, FarmResponseDTO> {
     }
 
     @Override
-    public boolean save(FarmRequestDTO entity) {
-        return false;
+    public FarmResponseDTO save(FarmRequestDTO reqEntity) {
+        Farm savedFarm = farmRepository.save(baseMapper.toEntity(reqEntity));
+        return baseMapper.toResponseDto(savedFarm);
     }
 
     @Override
-    public boolean update(FarmRequestDTO entity) {
-        return false;
+    public FarmResponseDTO update(FarmRequestDTO reqEntity, UUID oldId) {
+        Optional<Farm> optionalExistingFarm = farmRepository.findById(oldId);
+        if(optionalExistingFarm.isPresent()){
+            Farm existingFarm = optionalExistingFarm.get();
+            baseMapper.updateEntityFromDto(reqEntity, existingFarm);
+            Farm updatedFarm = farmRepository.save(existingFarm);
+            return baseMapper.toResponseDto(updatedFarm);
+        }else {
+            throw new RuntimeException("Entity not found for update");
+        }
     }
 
     @Override
-    public boolean delete(FarmRequestDTO entity) {
-        return false;
+    public boolean delete(UUID oldId) {
+        Optional<Farm> optionalFarm = farmRepository.findById(oldId);
+        if (optionalFarm.isPresent()) {
+            farmRepository.delete(optionalFarm.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 }
