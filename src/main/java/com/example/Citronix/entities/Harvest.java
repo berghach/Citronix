@@ -33,7 +33,7 @@ public class Harvest {
     @Column(name = "total_quantity")
     private Double totalQuantity;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "harvest")
+    @OneToOne(mappedBy = "harvest")
     private Sale sale;
 
     @OneToMany(mappedBy = "harvest", cascade = CascadeType.ALL, orphanRemoval = true)

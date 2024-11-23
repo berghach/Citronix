@@ -30,7 +30,7 @@ public class Sale {
     @Column(name = "unit_price")
     private Double unitPrice;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "harvest_id", referencedColumnName = "id")
     private Harvest harvest;
 }
