@@ -27,11 +27,7 @@ CREATE TABLE IF NOT EXISTS public.harvest
     date date,
     season character varying(255) COLLATE pg_catalog."default",
     total_quantity double precision,
-    client_name character varying(30) COLLATE pg_catalog."default",
-    unit_price double precision,
-    harvest_id uuid,
-    CONSTRAINT harvest_pkey PRIMARY KEY (id),
-    CONSTRAINT uke5f98pt43csc9gyw8duays0rf UNIQUE (harvest_id)
+    CONSTRAINT harvest_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.harvest_detail
@@ -39,6 +35,7 @@ CREATE TABLE IF NOT EXISTS public.harvest_detail
     quantity double precision,
     harvest_id uuid NOT NULL,
     tree_id uuid NOT NULL,
+    date date,
     CONSTRAINT harvest_detail_pkey PRIMARY KEY (harvest_id, tree_id)
 );
 
@@ -67,15 +64,6 @@ ALTER TABLE IF EXISTS public.field
     REFERENCES public.farm (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
-
-
-ALTER TABLE IF EXISTS public.harvest
-    ADD CONSTRAINT fk4f2kq6bymoc219sqbqawqdpb8 FOREIGN KEY (harvest_id)
-    REFERENCES public.harvest (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION;
-CREATE INDEX IF NOT EXISTS uke5f98pt43csc9gyw8duays0rf
-    ON public.harvest(harvest_id);
 
 
 ALTER TABLE IF EXISTS public.harvest_detail
@@ -107,18 +95,60 @@ ALTER TABLE IF EXISTS public.tree
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
 
-END;
-
--- trigger for Tree age update
+-- Update the function to calculate age in years as an integer
 CREATE OR REPLACE FUNCTION update_age()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.age := age(NEW.plantation_date);
+    NEW.age := EXTRACT(YEAR FROM age(NEW.plantation_date));
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_age_trigger ON tree;
+
+-- Create the trigger
 CREATE TRIGGER update_age_trigger
 BEFORE INSERT OR UPDATE ON tree
 FOR EACH ROW
 EXECUTE FUNCTION update_age();
+
+-- Insert data into farm table
+INSERT INTO public.farm (id, area, creation_date, location, name)
+VALUES
+('1e6d7550-4b78-4c60-b021-1e45eaf3b843', 100.5, '2022-01-15', 'Northfield', 'Sunny Farm'),
+('bb2d7550-4b78-4c60-b021-1e45eaf3b843', 250.0, '2023-03-01', 'Eastfield', 'Green Pastures');
+
+-- Insert data into field table
+INSERT INTO public.field (id, area, farm_id)
+VALUES
+('2a6d7550-4b78-4c60-b021-1e45eaf3b843', 50.0, '1e6d7550-4b78-4c60-b021-1e45eaf3b843'),
+('3b6d7550-4b78-4c60-b021-1e45eaf3b843', 45.0, '1e6d7550-4b78-4c60-b021-1e45eaf3b843'),
+('4c6d7550-4b78-4c60-b021-1e45eaf3b843', 125.0, 'bb2d7550-4b78-4c60-b021-1e45eaf3b843');
+
+-- Insert data into tree table
+INSERT INTO public.tree (id, age, plantation_date, field_id)
+VALUES
+('a1237550-4b78-4c60-b021-1e45eaf3b843', 10, '2013-05-15', '2a6d7550-4b78-4c60-b021-1e45eaf3b843'),
+('b4567550-4b78-4c60-b021-1e45eaf3b843', 7, '2016-04-10', '3b6d7550-4b78-4c60-b021-1e45eaf3b843'),
+('c7897550-4b78-4c60-b021-1e45eaf3b843', 5, '2018-07-20', '4c6d7550-4b78-4c60-b021-1e45eaf3b843');
+
+-- Insert data into harvest table
+INSERT INTO public.harvest (id, date, season, total_quantity)
+VALUES
+('f1237550-4b78-4c60-b021-1e45eaf3b843', '2023-06-15', 'spring', 150.0),
+('f4567550-4b78-4c60-b021-1e45eaf3b843', '2023-11-10', 'autumn', 200.0);
+
+-- Insert data into harvest_detail table
+INSERT INTO public.harvest_detail (quantity, harvest_id, tree_id, date)
+VALUES
+(50.0, 'f1237550-4b78-4c60-b021-1e45eaf3b843', 'a1237550-4b78-4c60-b021-1e45eaf3b843', '2023-06-15'),
+(100.0, 'f1237550-4b78-4c60-b021-1e45eaf3b843', 'b4567550-4b78-4c60-b021-1e45eaf3b843', '2023-06-15'),
+(150.0, 'f4567550-4b78-4c60-b021-1e45eaf3b843', 'c7897550-4b78-4c60-b021-1e45eaf3b843', '2023-11-10');
+-- Insert data into sale table
+INSERT INTO public.sale (id, client_name, date, unit_price, harvest_id)
+VALUES
+('12375504-b784-4c60-b021-1e45eaf3b843', 'John Doe', '2023-07-01', 2.5, 'f1237550-4b78-4c60-b021-1e45eaf3b843'),
+('45675504-b784-4c60-b021-1e45eaf3b843', 'Jane Smith', '2023-12-01', 3.0, 'f4567550-4b78-4c60-b021-1e45eaf3b843');
+
+
+END;

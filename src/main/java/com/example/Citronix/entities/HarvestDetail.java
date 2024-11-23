@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Accessors(chain = true)
 public class HarvestDetail {
     @EmbeddedId
-    private HarvestDetailId id = new HarvestDetailId();
+    private final HarvestDetailId id = new HarvestDetailId();
 
     @Column(name = "date")
     private LocalDate date;
