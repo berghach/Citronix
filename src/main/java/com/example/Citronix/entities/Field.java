@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Accessors(chain = true)
+@ToString
 public class Field {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

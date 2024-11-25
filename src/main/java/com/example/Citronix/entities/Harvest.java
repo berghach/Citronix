@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Accessors(chain = true)
+@ToString
 public class Harvest {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -3,12 +3,10 @@ package com.example.Citronix.services;
 import com.example.Citronix.dtos.request.HarvestRequestDTO;
 import com.example.Citronix.dtos.response.HarvestResponseDTO;
 import com.example.Citronix.entities.Harvest;
-import com.example.Citronix.mappers.BaseMapper;
 import com.example.Citronix.mappers.HarvestMapper;
 import com.example.Citronix.repositories.HarvestRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

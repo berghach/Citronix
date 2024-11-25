@@ -3,14 +3,15 @@ package com.example.Citronix.services;
 import com.example.Citronix.dtos.request.FarmRequestDTO;
 import com.example.Citronix.dtos.response.FarmResponseDTO;
 import com.example.Citronix.entities.Farm;
-import com.example.Citronix.mappers.BaseMapper;
 import com.example.Citronix.mappers.FarmMapper;
+import com.example.Citronix.repositories.FarmCriteriaBuilder;
 import com.example.Citronix.repositories.FarmRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @Transactional
 @RequiredArgsConstructor
 public class FarmService implements Services<FarmRequestDTO, FarmResponseDTO> {
-
+    private final FarmCriteriaBuilder farmCriteriaBuilder;
     private final FarmRepository farmRepository;
     private final FarmMapper farmMapper;
 
@@ -34,13 +35,22 @@ public class FarmService implements Services<FarmRequestDTO, FarmResponseDTO> {
     @Override
     public List<FarmResponseDTO> getAll() {
         List<Farm> farms = farmRepository.findAll();
-
         return farms.stream().map(farmMapper::toResponseDto).toList();
+    }
+
+    public List<FarmResponseDTO> getByCriteria(String name, String location, LocalDate date){
+        System.out.println("criteria prams service: "+name+ ", "+location+", "+date);
+
+        return farmCriteriaBuilder.findByCriteria(name, location, date);
     }
 
     @Override
     public FarmResponseDTO save(FarmRequestDTO reqEntity) {
-        Farm savedFarm = farmRepository.save(farmMapper.toEntity(reqEntity));
+        System.out.println(reqEntity);
+        Farm mappedReq = farmMapper.toEntity(reqEntity);
+        System.out.println(mappedReq);
+        Farm savedFarm = farmRepository.save(mappedReq);
+        System.out.println(savedFarm);
         return farmMapper.toResponseDto(savedFarm);
     }
 

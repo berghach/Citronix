@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter @Setter
 @Builder
-@Accessors(chain = true)
+@ToString
 public class Farm {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

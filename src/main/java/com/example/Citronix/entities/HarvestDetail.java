@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
-@Accessors(chain = true)
+@ToString
 public class HarvestDetail {
     @EmbeddedId
     private final HarvestDetailId id = new HarvestDetailId();

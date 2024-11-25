@@ -3,12 +3,10 @@ package com.example.Citronix.services;
 import com.example.Citronix.dtos.request.FieldRequestDTO;
 import com.example.Citronix.dtos.response.FieldResponseDTO;
 import com.example.Citronix.entities.Field;
-import com.example.Citronix.mappers.BaseMapper;
 import com.example.Citronix.mappers.FieldMapper;
 import com.example.Citronix.repositories.FieldRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
