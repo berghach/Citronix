@@ -13,8 +13,8 @@ import org.mapstruct.factory.Mappers;
 public interface FieldMapper {
     FieldMapper INSTANCE = Mappers.getMapper(FieldMapper.class);
 
-    @Mapping(target = "id", ignore = true)
     Field toEntity (FieldRequestDTO dto );
+    //@Mapping(target = "id", source = "id")
     FieldResponseDTO toResponseDto (Field entity );
     void updateEntityFromDto(FieldRequestDTO dto, @MappingTarget Field entity);
 }

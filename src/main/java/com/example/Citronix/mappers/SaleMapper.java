@@ -13,8 +13,8 @@ import org.mapstruct.factory.Mappers;
 public interface SaleMapper {
     SaleMapper INSTANCE = Mappers.getMapper(SaleMapper.class);
 
-    @Mapping(target = "id", ignore = true)
     Sale toEntity ( SaleRequestDTO dto );
+    //@Mapping(target = "id", source = "id")
     SaleResponseDTO toResponseDto ( Sale entity );
     void updateEntityFromDto(SaleRequestDTO dto, @MappingTarget Sale entity);
 }

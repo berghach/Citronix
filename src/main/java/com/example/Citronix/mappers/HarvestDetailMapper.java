@@ -4,7 +4,6 @@ import com.example.Citronix.dtos.request.HarvestDetailRequestDTO;
 import com.example.Citronix.dtos.response.HarvestDetailResponseDTO;
 import com.example.Citronix.entities.HarvestDetail;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;

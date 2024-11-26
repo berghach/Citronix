@@ -12,8 +12,8 @@ import org.mapstruct.factory.Mappers;
 public interface FarmMapper {
     FarmMapper INSTANCE = Mappers.getMapper(FarmMapper.class);
 
-    @Mapping(target = "id", ignore = true)
     Farm toEntity ( FarmRequestDTO dto );
+    @Mapping(target = "id", source = "id")
     FarmResponseDTO toResponseDto ( Farm entity );
     void updateEntityFromDto(FarmRequestDTO dto, @MappingTarget Farm entity);
 }

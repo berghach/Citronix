@@ -13,8 +13,8 @@ import org.mapstruct.factory.Mappers;
 public interface TreeMapper {
     TreeMapper INSTANCE = Mappers.getMapper(TreeMapper.class);
 
-    @Mapping(target = "id", ignore = true)
     Tree toEntity ( TreeRequestDTO dto );
+    //@Mapping(target = "id", source = "id")
     TreeResponseDTO toResponseDto ( Tree entity );
     void updateEntityFromDto(TreeRequestDTO dto, @MappingTarget Tree entity);
 }

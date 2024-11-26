@@ -13,8 +13,8 @@ import org.mapstruct.factory.Mappers;
 public interface HarvestMapper {
     HarvestMapper INSTANCE = Mappers.getMapper(HarvestMapper.class);
 
-    @Mapping(target = "id", ignore = true)
     Harvest toEntity ( HarvestRequestDTO dto );
+    //@Mapping(target = "id", source = "id")
     HarvestResponseDTO toResponseDto ( Harvest entity );
     void updateEntityFromDto(HarvestRequestDTO dto, @MappingTarget Harvest entity);
 }
